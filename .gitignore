@@ -1,0 +1,81 @@
+# Visual Studio
+.vscode/
+.vs/
+*.user
+*.userosscache
+*.suo
+*.userprefs
+*.csproj.user
+
+# DotNet
+project.lock.json
+project.fragment.lock.json
+artifacts/
+bin/
+obj/
+Debug/
+Release/
+*.exe
+*.dll
+*.pdb
+*.app
+*.ipa
+*.dSYM
+*.so
+*.a
+*.o
+*.dll.config
+*.config
+*.config.json
+*.log
+
+# Resharper
+_ReSharper*/
+*.ReSharper
+*.DotSettings.user
+
+# DotCover
+*.dotCover
+
+# Azure DevOps
+.env
+.local
+
+# NuGet
+*.nupkg
+*.snupkg
+.nuget/
+packages/
+*.nuget.props
+
+# NCrunch
+*.ncrunchproject
+*.ncrunchsolution
+
+# Coverlet
+coverage*.json
+coverage*.xml
+coverage*.info
+
+# StyleCop
+StyleCopReport.xml
+
+# JetBrains Rider
+.idea/
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/**/usage.statistics.xml
+.idea/**/dictionaries
+.idea/**/shelf/
+.idea/**/workspace.xml
+
+# Rider .NET Core Web
+.idea/**/docker-compose.yaml
+
+# Others
+*.sln.docstates
+
+#Keep only the appsettings file
+appsettings.Development.json
+appsettings.Production.json
+appsettings.*.json
