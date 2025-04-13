@@ -130,6 +130,6 @@ dotnet run
 
 ## 🧑‍💻 Author
 
-Built with ❤️ by [Your Name]
+Built with ❤️ by Hari PT
 
 ---
