@@ -140,7 +140,6 @@ namespace EmailAddressVerificationAPI.Services
 
         private async Task SendCommandAsync(Stream stream, string command)
         {
-
             byte[] buffer = Encoding.ASCII.GetBytes(command);
             await stream.WriteAsync(buffer, 0, buffer.Length);
             await stream.FlushAsync();

@@ -18,54 +18,65 @@ namespace EmailAddressVerificationAPI.Services
 
         private void LoadTLDs()
         {
-            var topLevelDomains = new HashSet<string>();
-
-            if (File.Exists(FilePath))
+            try
             {
-                foreach (var line in File.ReadLines(FilePath))
+                var topLevelDomains = new HashSet<string>();
+
+                if (File.Exists(FilePath))
                 {
-                    var domain = line.Trim().ToLower();
-                    if (!string.IsNullOrEmpty(domain))
+                    foreach (var line in File.ReadLines(FilePath))
                     {
-                        topLevelDomains.Add(domain);
+                        var domain = line.Trim().ToLower();
+                        if (!string.IsNullOrEmpty(domain))
+                        {
+                            topLevelDomains.Add(domain);
+                        }
                     }
                 }
-            }
-            else
-            {
-                Console.WriteLine($"Warning: {FilePath} not found. No domains loaded.");
-            }
 
-            _cache.Set(CacheKey, topLevelDomains, new MemoryCacheEntryOptions
+                _cache.Set(CacheKey, topLevelDomains, new MemoryCacheEntryOptions
+                {
+                    SlidingExpiration = TimeSpan.FromMinutes(60)
+                });
+            }
+            catch (Exception)
             {
-                SlidingExpiration = TimeSpan.FromMinutes(60)
-            });
+                throw;
+            }
         }
 
         public Task<EmailStatusCode> IsRegisteredTLD(string domain)
         {
-            if (string.IsNullOrWhiteSpace(domain))
-                return Task.FromResult(EmailStatusCode.Invalid);
 
-            if (!_cache.TryGetValue(CacheKey, out HashSet<string>? topLevelDomains))
+            try
             {
-                lock (CacheLock)
+                if (string.IsNullOrWhiteSpace(domain))
+                    return Task.FromResult(EmailStatusCode.Invalid);
+
+                if (!_cache.TryGetValue(CacheKey, out HashSet<string>? topLevelDomains))
                 {
-                    if (!_cache.TryGetValue(CacheKey, out topLevelDomains))
+                    lock (CacheLock)
                     {
-                        LoadTLDs();
-                        _cache.TryGetValue(CacheKey, out topLevelDomains);
+                        if (!_cache.TryGetValue(CacheKey, out topLevelDomains))
+                        {
+                            LoadTLDs();
+                            _cache.TryGetValue(CacheKey, out topLevelDomains);
+                        }
                     }
                 }
+
+                EmailStatusCode result = EmailStatusCode.Invalid;
+
+                if (topLevelDomains.Contains(domain.ToLower()))
+                {
+                    result = EmailStatusCode.Valid;
+                }
+                return Task.FromResult(result);
             }
-
-            EmailStatusCode result = EmailStatusCode.Invalid;
-
-            if (topLevelDomains.Contains(domain.ToLower()))
+            catch (Exception)
             {
-                result = EmailStatusCode.Valid;
+                return Task.FromResult(EmailStatusCode.InternalServerError);
             }
-            return Task.FromResult(result);
         }
     }
 }

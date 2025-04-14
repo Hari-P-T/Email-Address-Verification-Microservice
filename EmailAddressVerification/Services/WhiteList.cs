@@ -18,53 +18,63 @@ namespace EmailAddressVerificationAPI.Services
 
         private void LoadWhitelistedProviders()
         {
-            var whitelistedProviders = new HashSet<string>();
-
-            if (File.Exists(FilePath))
+            try
             {
-                foreach (var line in File.ReadLines(FilePath))
+                var whitelistedProviders = new HashSet<string>();
+
+                if (File.Exists(FilePath))
                 {
-                    var domain = line.Trim().ToLower();
-                    if (!string.IsNullOrEmpty(domain))
+                    foreach (var line in File.ReadLines(FilePath))
                     {
-                        whitelistedProviders.Add(domain);
+                        var domain = line.Trim().ToLower();
+                        if (!string.IsNullOrEmpty(domain))
+                        {
+                            whitelistedProviders.Add(domain);
+                        }
                     }
                 }
-            }
-            else
-            {
-                Console.WriteLine($"Warning: {FilePath} not found. No domains loaded.");
-            }
 
-            _cache.Set(CacheKey, whitelistedProviders, new MemoryCacheEntryOptions
+                _cache.Set(CacheKey, whitelistedProviders, new MemoryCacheEntryOptions
+                {
+                    SlidingExpiration = TimeSpan.FromMinutes(60)
+                });
+            }
+            catch(Exception)
             {
-                SlidingExpiration = TimeSpan.FromMinutes(60)
-            });
+                throw;
+            }
         }
 
         public Task<EmailStatusCode> IsWhitelisted(string domain)
         {
-            if (string.IsNullOrWhiteSpace(domain))
-                return Task.FromResult(EmailStatusCode.Invalid);
-
-            if (!_cache.TryGetValue(CacheKey, out HashSet<string>? whitelistedProviders))
+            try
             {
-                lock (CacheLock)
+                if (string.IsNullOrWhiteSpace(domain))
+                    return Task.FromResult(EmailStatusCode.Invalid);
+
+                if (!_cache.TryGetValue(CacheKey, out HashSet<string>? whitelistedProviders))
                 {
-                    if (!_cache.TryGetValue(CacheKey, out whitelistedProviders))
+                    lock (CacheLock)
                     {
-                        LoadWhitelistedProviders();
-                        _cache.TryGetValue(CacheKey, out whitelistedProviders);
+                        if (!_cache.TryGetValue(CacheKey, out whitelistedProviders))
+                        {
+                            LoadWhitelistedProviders();
+                            _cache.TryGetValue(CacheKey, out whitelistedProviders);
+                        }
                     }
                 }
-            }
-            EmailStatusCode result = EmailStatusCode.Invalid;
-            if(whitelistedProviders.Contains(domain.ToLower()))
-            {
-                result = EmailStatusCode.Valid;
-            }
+                EmailStatusCode result = EmailStatusCode.Invalid;
+                if(whitelistedProviders.Contains(domain.ToLower()))
+                {
+                    result = EmailStatusCode.Valid;
+                }
 
-            return Task.FromResult(result);
+                return Task.FromResult(result);
+            }
+            catch (Exception)
+            {
+                return Task.FromResult(EmailStatusCode.InternalServerError);
+            }
         }
     }
 }

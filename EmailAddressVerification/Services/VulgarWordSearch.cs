@@ -18,54 +18,63 @@ namespace EmailAddressVerificationAPI.Services
 
         private void LoadVulgarWords()
         {
-            var vulgarWords = new HashSet<string>();
-
-            if (File.Exists(FilePath))
+            try
             {
-                foreach (var line in File.ReadLines(FilePath))
+                var vulgarWords = new HashSet<string>();
+
+                if (File.Exists(FilePath))
                 {
-                    var words = line.Trim().ToLower();
-                    if (!string.IsNullOrEmpty(words))
+                    foreach (var line in File.ReadLines(FilePath))
                     {
-                        vulgarWords.Add(words);
+                        var words = line.Trim().ToLower();
+                        if (!string.IsNullOrEmpty(words))
+                        {
+                            vulgarWords.Add(words);
+                        }
                     }
                 }
-            }
-            else
-            {
-                Console.WriteLine($"Warning: {FilePath} not found. No domains loaded.");
-            }
 
-            _cache.Set(CacheKey, vulgarWords, new MemoryCacheEntryOptions
+                _cache.Set(CacheKey, vulgarWords, new MemoryCacheEntryOptions
+                {
+                    SlidingExpiration = TimeSpan.FromMinutes(60)
+                });
+            }
+            catch (Exception)
             {
-                SlidingExpiration = TimeSpan.FromMinutes(60)
-            });
+                throw;
+            }
         }
 
         public Task<EmailStatusCode> HasVulgarWordsAsync(string domain)
         {
-            if (string.IsNullOrWhiteSpace(domain))
-                return Task.FromResult(EmailStatusCode.Invalid);
-
-            if (!_cache.TryGetValue(CacheKey, out HashSet<string>? vulgarWords))
+            try
             {
-                lock (CacheLock)
+                if (string.IsNullOrWhiteSpace(domain))
+                    return Task.FromResult(EmailStatusCode.Invalid);
+
+                if (!_cache.TryGetValue(CacheKey, out HashSet<string>? vulgarWords))
                 {
-                    if (!_cache.TryGetValue(CacheKey, out vulgarWords))
+                    lock (CacheLock)
                     {
-                        LoadVulgarWords();
-                        _cache.TryGetValue(CacheKey, out vulgarWords);
+                        if (!_cache.TryGetValue(CacheKey, out vulgarWords))
+                        {
+                            LoadVulgarWords();
+                            _cache.TryGetValue(CacheKey, out vulgarWords);
+                        }
                     }
                 }
-            }
 
-            EmailStatusCode result=EmailStatusCode.Invalid;
-            if (vulgarWords.Contains(domain.ToLower()))
+                EmailStatusCode result=EmailStatusCode.Invalid;
+                if (vulgarWords.Contains(domain.ToLower()))
+                {
+                    result = EmailStatusCode.Valid;
+                }
+                return Task.FromResult(result);
+            }
+            catch(Exception)
             {
-                result = EmailStatusCode.Valid;
+                return Task.FromResult(EmailStatusCode.InternalServerError);
             }
-            return Task.FromResult(result);
         }
-
     }
 }
