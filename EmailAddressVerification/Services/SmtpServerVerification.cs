@@ -1,12 +1,11 @@
 ﻿using DnsClient;
-using DnsClient.Protocol;
-using EmailAddressVerification.Models;
+using EmailAddressVerificationAPI.Models;
 using System.Net.Security;
 using System.Net.Sockets;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
-namespace EmailAddressVerification.Services
+namespace EmailAddressVerificationAPI.Services
 {
     public class SmtpServerVerification
     {
@@ -242,36 +241,6 @@ namespace EmailAddressVerification.Services
                 }
                 verificationResults[0] = EmailStatusCode.Valid;
                 int port = 25;
-
-                //foreach (var mxRecord in mxRecords)
-                //{
-                //    var result = await CheckSingleMXAsync(email, domain, mxRecord, port);
-                //    if ((int)result == 200)
-                //    {
-                //        verificationResults[1] = EmailStatusCode.Valid;
-                //        if (((int)await CheckSpfAsync(domain) == 200))
-                //        {
-                //            verificationResults[2] = EmailStatusCode.Valid;
-                //        }
-                //        if (((int)await CheckDkimAsync(domain) == 200))
-                //        {
-                //            verificationResults[3] = EmailStatusCode.Valid;
-                //        }
-                //        if (((int)await CheckDmarcAsync(domain) == 200))
-                //        {
-                //            verificationResults[4] = EmailStatusCode.Valid;
-                //        }
-                //        return verificationResults;
-                //    }
-                //    else if ((int)result == 400)
-                //    {
-                //        return verificationResults;
-                //    }
-                //    else
-                //    {
-                //        continue;
-                //    }
-                //}
 
                 var result = await CheckSingleMXAsync(email, domain, mxRecords.FirstOrDefault(), port);
                 if ((int)result == 200)

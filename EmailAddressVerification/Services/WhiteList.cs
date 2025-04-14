@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using Microsoft.Extensions.Caching.Memory;
+﻿using Microsoft.Extensions.Caching.Memory;
 using EmailAddressVerificationAPI.Models;
-using EmailAddressVerification.Models;
 
 namespace EmailAddressVerificationAPI.Services
 {
@@ -62,7 +58,6 @@ namespace EmailAddressVerificationAPI.Services
                     }
                 }
             }
-            //whitelistedProviders?.Contains(domain.ToLower()) ?? false;
             EmailStatusCode result = EmailStatusCode.Invalid;
             if(whitelistedProviders.Contains(domain.ToLower()))
             {

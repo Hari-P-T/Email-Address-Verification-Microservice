@@ -1,6 +1,5 @@
-﻿using EmailAddressVerification.Models;
-using EmailAddressVerification.Services;
-using EmailAddressVerificationAPI.Models;
+﻿using EmailAddressVerificationAPI.Models;
+using EmailAddressVerificationAPI.Services;
 using System.Text.RegularExpressions;
 
 namespace EmailAddressVerificationAPI.Services
@@ -106,7 +105,6 @@ namespace EmailAddressVerificationAPI.Services
                 }
                 else
                 {
-                    //_responseDTO.TotalScore=
                     return _responseDTO;
                 }
 

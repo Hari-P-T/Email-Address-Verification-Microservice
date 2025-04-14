@@ -1,6 +1,4 @@
-﻿using EmailAddressVerification.Models;
-
-namespace EmailAddressVerificationAPI.Models
+﻿namespace EmailAddressVerificationAPI.Models
 {
     public class ChecklistElementDTO
     {

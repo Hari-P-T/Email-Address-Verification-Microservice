@@ -1,8 +1,6 @@
-﻿using System.Threading.RateLimiting;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Threading.RateLimiting;
-
-namespace EmailAddressVerification.Policies
+namespace EmailAddressVerificationAPI.Policies
 {
 
     public static class IpRateLimitStore
@@ -26,5 +24,3 @@ namespace EmailAddressVerification.Policies
         }
     }
 }
-
-

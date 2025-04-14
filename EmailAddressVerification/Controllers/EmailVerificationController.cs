@@ -1,11 +1,6 @@
 using EmailAddressVerificationAPI.Services;
 using EmailAddressVerificationAPI.Models;
-using EmailAddressVerificationAPI.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
-using System.Diagnostics;
-using System.Threading;
-using Microsoft.AspNetCore.RateLimiting;
 
 
 namespace EmailAddressVerificationAPI.Controllers
@@ -22,16 +17,13 @@ namespace EmailAddressVerificationAPI.Controllers
         }
 
         [HttpPost("verify")]
-        //[EnableRateLimiting("EmailVerificationRate")]
         public async Task<IActionResult> VerifyEmail([FromBody] List<RequestDTO> RequestList )
         {
-           // Console.WriteLine(RequestList.Count);
             if (RequestList.Count==0)
             {
                 return BadRequest("Email is required");
             }
 
-            //var tasks = RequestList.Select(request => _domainVerification.VerifyEmailDomain(request.Email, request.Strictness));
 
             var tasks = RequestList.Select(async request =>
             {
@@ -42,7 +34,6 @@ namespace EmailAddressVerificationAPI.Controllers
 
                 if (completedTask == timeoutTask)
                 {
-                    // Handle timeout — return a default or failed result
                     return null;
                 }
 

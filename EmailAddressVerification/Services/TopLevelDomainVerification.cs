@@ -1,15 +1,4 @@
-﻿//namespace EmailAddressVerification.Services
-//{
-//    public class TopLevelDomainVerification
-//    {
-
-//    }
-//}
-
-using System;
-using System.Collections.Generic;
-using System.IO;
-using EmailAddressVerification.Models;
+﻿using EmailAddressVerificationAPI.Models;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace EmailAddressVerificationAPI.Services

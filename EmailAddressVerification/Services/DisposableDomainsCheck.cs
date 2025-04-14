@@ -1,7 +1,7 @@
-﻿using EmailAddressVerification.Models;
+﻿using EmailAddressVerificationAPI.Models;
 using Microsoft.Extensions.Caching.Memory;
 
-namespace EmailAddressVerification.Services
+namespace EmailAddressVerificationAPI.Services
 {
     public class DisposableDomainsCheck
     {

@@ -1,7 +1,7 @@
-﻿using EmailAddressVerification.Models;
+﻿using EmailAddressVerificationAPI.Models;
 using Microsoft.Extensions.Caching.Memory;
 
-namespace EmailAddressVerification.Services
+namespace EmailAddressVerificationAPI.Services
 {
     public class VulgarWordSearch
     {
@@ -41,24 +41,6 @@ namespace EmailAddressVerification.Services
                 SlidingExpiration = TimeSpan.FromMinutes(60)
             });
         }
-
-        //public Task<bool> HasVulgarWords(string domain)
-        //{
-        //    if (string.IsNullOrWhiteSpace(domain)) return false;
-
-        //    if (!_cache.TryGetValue(CacheKey, out HashSet<string>? vulgarWords))
-        //    {
-        //        lock (CacheLock)
-        //        {
-        //            if (!_cache.TryGetValue(CacheKey, out vulgarWords))
-        //            {
-        //                LoadVulgarWords();
-        //                _cache.TryGetValue(CacheKey, out vulgarWords);
-        //            }
-        //        }
-        //    }
-        //    return await vulgarWords?.Contains(domain.ToLower()) ?? false;
-        //}
 
         public Task<EmailStatusCode> HasVulgarWordsAsync(string domain)
         {

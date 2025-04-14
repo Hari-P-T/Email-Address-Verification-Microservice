@@ -1,4 +1,4 @@
-﻿namespace EmailAddressVerification.Models
+﻿namespace EmailAddressVerificationAPI.Models
 {
     public enum EmailStatusCode
     {
