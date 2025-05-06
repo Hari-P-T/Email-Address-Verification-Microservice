@@ -97,6 +97,7 @@ namespace EmailAddressVerificationAPI.Services
         {
             try
             {
+                strictness=0;
                 bool low=false, medium=false, high=false;
 
                 if (strictness >=0)
